@@ -51,6 +51,23 @@ config ATA_VERBOSE_ERROR
 
 	  If unsure, say Y.
 
+config ATA_SYSFS_NAMING
+	bool "Align sysfs device names with kernel messages"
+	default n
+	help
+	  This option modifies the device naming to use a common
+	  format for all ATA objects (port, link, and devices) and use
+	  these names for both the sysfs directories and the kernel message
+	  log to align with the linux driver model.
+	  The names have the format ata<port>-<link>.<device>, such that an
+	  ATA port will have the name 'ata<port>', an ATA link the name
+	  'ata<port>-<link>', and an ATA device the name
+	  'ata<port>-<link>.<devno>'.
+	  This option changes the sysfs names, so userland tools might be
+	  impacted.
+
+	  If unsure, say N.
+
 config ATA_FORCE
 	bool "\"libata.force=\" kernel parameter support" if EXPERT
 	default y

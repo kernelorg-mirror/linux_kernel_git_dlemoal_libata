@@ -1440,6 +1440,41 @@ static inline int sata_srst_pmp(struct ata_link *link)
 	return link->pmp;
 }
 
+#ifdef CONFIG_ATA_SYSFS_NAMING
+#define ata_port_err(ap, fmt, ...)				\
+	dev_err(&ap->tdev, fmt, ##__VA_ARGS__)
+#define ata_port_warn(ap, fmt, ...)				\
+	dev_warn(&ap->tdev, fmt, ##__VA_ARGS__)
+#define ata_port_notice(ap, fmt, ...)				\
+	dev_notice(&ap->tdev, fmt, ##__VA_ARGS__)
+#define ata_port_info(ap, fmt, ...)				\
+	dev_info(&ap->tdev, fmt, ##__VA_ARGS__)
+#define ata_port_dbg(ap, fmt, ...)				\
+	dev_dbg(&ap->tdev, fmt, ##__VA_ARGS__)
+
+#define ata_link_err(link, fmt, ...)				\
+	dev_err(&link->tdev, fmt, ##__VA_ARGS__)
+#define ata_link_warn(link, fmt, ...)				\
+	dev_warn(&link->tdev, fmt, ##__VA_ARGS__)
+#define ata_link_notice(link, fmt, ...)				\
+	dev_notice(&link->tdev, fmt, ##__VA_ARGS__)
+#define ata_link_info(link, fmt, ...)				\
+	dev_info(&link->tdev, fmt, ##__VA_ARGS__)
+#define ata_link_dbg(link, fmt, ...)				\
+	dev_dbg(&link->tdev, fmt, ##__VA_ARGS__)
+
+#define ata_dev_err(dev, fmt, ...)				\
+	dev_err(&dev->tdev, fmt, ##__VA_ARGS__)
+#define ata_dev_warn(dev, fmt, ...)				\
+	dev_warn(&dev->tdev, fmt, ##__VA_ARGS__)
+#define ata_dev_notice(dev, fmt, ...)				\
+	dev_notice(&dev->tdev, fmt, ##__VA_ARGS__)
+#define ata_dev_info(dev, fmt, ...)				\
+	dev_info(&dev->tdev, fmt, ##__VA_ARGS__)
+#define ata_dev_dbg(dev, fmt, ...)				\
+	dev_dbg(&dev->tdev, fmt, ##__VA_ARGS__)
+
+#else
 #define ata_port_printk(level, ap, fmt, ...)			\
 	pr_ ## level ("ata%u: " fmt, (ap)->print_id, ##__VA_ARGS__)
 
@@ -1495,6 +1530,7 @@ do {								\
 	ata_dev_printk(info, dev, fmt, ##__VA_ARGS__)
 #define ata_dev_dbg(dev, fmt, ...)				\
 	ata_dev_printk(debug, dev, fmt, ##__VA_ARGS__)
+#endif
 
 void ata_print_version(const struct device *dev, const char *version);
 

@@ -81,9 +81,13 @@ struct ata_internal {
 	tdev_to_port((dev)->parent)
 
 
-/* Device objects are always created whit link objects */
+/* Device objects are always created with link objects */
 static int ata_tdev_add(struct ata_device *dev);
 static void ata_tdev_delete(struct ata_device *dev);
+
+static struct bus_type ata_bus_type = {
+        .name		= "ata",
+};
 
 
 /*
@@ -288,7 +292,12 @@ int ata_tport_add(struct device *parent,
 	dev->parent = parent;
 	ata_host_get(ap->host);
 	dev->release = ata_tport_release;
+#ifdef CONFIG_ATA_SYSFS_NAMING
+	dev->bus = &ata_bus_type;
+	dev_set_name(dev, "port%d", ap->print_id);
+#else
 	dev_set_name(dev, "ata%d", ap->print_id);
+#endif
 	transport_setup_device(dev);
 	ata_acpi_bind_port(ap);
 	error = device_add(dev);
@@ -444,6 +453,9 @@ int ata_tlink_add(struct ata_link *link)
 	device_initialize(dev);
 	dev->parent = &ap->tdev;
 	dev->release = ata_tlink_release;
+#ifdef CONFIG_ATA_SYSFS_NAMING
+	dev->bus = &ata_bus_type;
+#endif
 	if (ata_is_host_link(link))
 		dev_set_name(dev, "link%d", ap->print_id);
 	else
@@ -695,8 +707,11 @@ static int ata_tdev_add(struct ata_device *ata_dev)
 	device_initialize(dev);
 	dev->parent = &link->tdev;
 	dev->release = ata_tdev_release;
+#ifdef CONFIG_ATA_SYSFS_NAMING
+	dev->bus = &ata_bus_type;
+#endif
 	if (ata_is_host_link(link))
-		dev_set_name(dev, "dev%d.%d", ap->print_id,ata_dev->devno);
+		dev_set_name(dev, "dev%d.%d", ap->print_id, ata_dev->devno);
 	else
 		dev_set_name(dev, "dev%d.%d.0", ap->print_id, link->pmp);
 
@@ -822,8 +837,13 @@ __init int libata_transport_init(void)
 	error = transport_class_register(&ata_dev_class);
 	if (error)
 		goto out_unregister_port;
+	error = bus_register(&ata_bus_type);
+	if (error)
+		goto out_unregister_bus;
 	return 0;
 
+ out_unregister_bus:
+	bus_unregister(&ata_bus_type);
  out_unregister_port:
 	transport_class_unregister(&ata_port_class);
  out_unregister_link:
