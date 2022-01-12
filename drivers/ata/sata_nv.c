@@ -1529,7 +1529,6 @@ static int nv_hardreset(struct ata_link *link, unsigned int *class,
 		sata_link_hardreset(link, sata_deb_timing_hotplug, deadline,
 				    NULL, NULL);
 	else {
-		const unsigned long *timing = sata_ehc_deb_timing(ehc);
 		int rc;
 
 		if (!(ehc->i.flags & ATA_EHI_QUIET))
@@ -1537,7 +1536,7 @@ static int nv_hardreset(struct ata_link *link, unsigned int *class,
 				      "nv: skipping hardreset on occupied port\n");
 
 		/* make sure the link is online */
-		rc = sata_link_resume(link, timing, deadline);
+		rc = sata_link_resume(link, deadline);
 		/* whine about phy resume failure but proceed */
 		if (rc && rc != -EOPNOTSUPP)
 			ata_link_warn(link, "failed to resume link (errno=%d)\n",

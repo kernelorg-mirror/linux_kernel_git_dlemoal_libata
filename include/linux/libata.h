@@ -1164,8 +1164,7 @@ extern int sata_set_spd(struct ata_link *link);
 extern int sata_link_hardreset(struct ata_link *link,
 			const unsigned long *timing, unsigned long deadline,
 			bool *online, int (*check_ready)(struct ata_link *));
-extern int sata_link_resume(struct ata_link *link, const unsigned long *params,
-			    unsigned long deadline);
+extern int sata_link_resume(struct ata_link *link, unsigned long deadline);
 extern void ata_eh_analyze_ncq_error(struct ata_link *link);
 #else
 static inline const unsigned long *
@@ -1198,7 +1197,6 @@ static inline int sata_link_hardreset(struct ata_link *link,
 	return -EOPNOTSUPP;
 }
 static inline int sata_link_resume(struct ata_link *link,
-				   const unsigned long *params,
 				   unsigned long deadline)
 {
 	return -EOPNOTSUPP;

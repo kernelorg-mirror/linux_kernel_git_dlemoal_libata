@@ -621,7 +621,6 @@ static int inic_hardreset(struct ata_link *link, unsigned int *class,
 	struct ata_port *ap = link->ap;
 	void __iomem *port_base = inic_port_base(ap);
 	void __iomem *idma_ctl = port_base + PORT_IDMA_CTL;
-	const unsigned long *timing = sata_ehc_deb_timing(&link->eh_context);
 	int rc;
 
 	/* hammer it into sane state */
@@ -632,7 +631,7 @@ static int inic_hardreset(struct ata_link *link, unsigned int *class,
 	ata_msleep(ap, 1);
 	writew(0, idma_ctl);
 
-	rc = sata_link_resume(link, timing, deadline);
+	rc = sata_link_resume(link, deadline);
 	if (rc) {
 		ata_link_warn(link,
 			      "failed to resume link after reset (errno=%d)\n",

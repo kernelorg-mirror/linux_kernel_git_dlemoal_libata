@@ -279,22 +279,9 @@ int sata_link_debounce(struct ata_link *link, const unsigned long *params,
 }
 EXPORT_SYMBOL_GPL(sata_link_debounce);
 
-/**
- *	sata_link_resume - resume SATA link
- *	@link: ATA link to resume SATA
- *	@params: timing parameters { interval, duration, timeout } in msec
- *	@deadline: deadline jiffies for the operation
- *
- *	Resume SATA phy @link and debounce it.
- *
- *	LOCKING:
- *	Kernel thread context (may sleep)
- *
- *	RETURNS:
- *	0 on success, -errno on failure.
- */
-int sata_link_resume(struct ata_link *link, const unsigned long *params,
-		     unsigned long deadline)
+static int __sata_link_resume(struct ata_link *link,
+			      const unsigned long *timing,
+			      unsigned long deadline)
 {
 	int tries = ATA_LINK_RESUME_TRIES;
 	u32 scontrol, serror;
@@ -335,7 +322,7 @@ int sata_link_resume(struct ata_link *link, const unsigned long *params,
 		ata_link_warn(link, "link resume succeeded after %d retries\n",
 			      ATA_LINK_RESUME_TRIES - tries);
 
-	if ((rc = sata_link_debounce(link, params, deadline)))
+	if ((rc = sata_link_debounce(link, timing, deadline)))
 		return rc;
 
 	/* clear SError, some PHYs require this even for SRST to work */
@@ -343,6 +330,25 @@ int sata_link_resume(struct ata_link *link, const unsigned long *params,
 		rc = sata_scr_write(link, SCR_ERROR, serror);
 
 	return rc != -EINVAL ? rc : 0;
+}
+
+/**
+ *	sata_link_resume - resume SATA link
+ *	@link: ATA link to resume SATA
+ *	@deadline: deadline jiffies for the operation
+ *
+ *	Resume SATA phy @link and debounce it.
+ *
+ *	LOCKING:
+ *	Kernel thread context (may sleep)
+ *
+ *	RETURNS:
+ *	0 on success, -errno on failure.
+ */
+int sata_link_resume(struct ata_link *link, unsigned long deadline)
+{
+	return __sata_link_resume(link,
+			sata_ehc_deb_timing(&link->eh_context), deadline);
 }
 EXPORT_SYMBOL_GPL(sata_link_resume);
 
@@ -568,7 +574,7 @@ int sata_link_hardreset(struct ata_link *link, const unsigned long *timing,
 	ata_msleep(link->ap, 1);
 
 	/* bring link back */
-	rc = sata_link_resume(link, timing, deadline);
+	rc = __sata_link_resume(link, timing, deadline);
 	if (rc)
 		goto out;
 	/* if link is offline nothing more to do */
