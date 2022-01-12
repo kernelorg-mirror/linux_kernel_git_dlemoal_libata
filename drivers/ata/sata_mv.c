@@ -3633,11 +3633,9 @@ static int mv_hardreset(struct ata_link *link, unsigned int *class,
 
 	/* Workaround for errata FEr SATA#10 (part 2) */
 	do {
-		const unsigned long *timing =
-				sata_ehc_deb_timing(&link->eh_context);
-
-		rc = sata_link_hardreset(link, timing, deadline + extra,
-					 &online, NULL);
+		rc = sata_link_hardreset(link,
+					 sata_ehc_deb_timing(&link->eh_context),
+					 deadline + extra, &online, NULL);
 		rc = online ? -EAGAIN : rc;
 		if (rc)
 			return rc;

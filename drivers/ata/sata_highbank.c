@@ -385,7 +385,7 @@ static int highbank_initialize_phys(struct device *dev, void __iomem *addr)
 static int ahci_highbank_hardreset(struct ata_link *link, unsigned int *class,
 				unsigned long deadline)
 {
-	static const unsigned long timing[] = { 5, 100, 500};
+	const struct sata_deb_timing timing = { 5, 100, 500};
 	struct ata_port *ap = link->ap;
 	struct ahci_port_priv *pp = ap->private_data;
 	struct ahci_host_priv *hpriv = ap->host->private_data;
@@ -405,7 +405,7 @@ static int ahci_highbank_hardreset(struct ata_link *link, unsigned int *class,
 
 	do {
 		highbank_cphy_disable_overrides(link->ap->port_no);
-		rc = sata_link_hardreset(link, timing, deadline, &online, NULL);
+		rc = sata_link_hardreset(link, &timing, deadline, &online, NULL);
 		highbank_cphy_override_lane(link->ap->port_no);
 
 		/* If the status is 1, we are connected, but the link did not

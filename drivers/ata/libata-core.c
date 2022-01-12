@@ -3615,12 +3615,13 @@ EXPORT_SYMBOL_GPL(ata_std_prereset);
 int sata_std_hardreset(struct ata_link *link, unsigned int *class,
 		       unsigned long deadline)
 {
-	const unsigned long *timing = sata_ehc_deb_timing(&link->eh_context);
 	bool online;
 	int rc;
 
 	/* do hardreset */
-	rc = sata_link_hardreset(link, timing, deadline, &online, NULL);
+	rc = sata_link_hardreset(link, sata_ehc_deb_timing(&link->eh_context),
+				 deadline, &online, NULL);
+
 	return online ? -EAGAIN : rc;
 }
 EXPORT_SYMBOL_GPL(sata_std_hardreset);

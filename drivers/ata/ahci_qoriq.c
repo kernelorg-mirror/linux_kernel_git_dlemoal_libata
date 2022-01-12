@@ -90,7 +90,6 @@ MODULE_DEVICE_TABLE(acpi, ahci_qoriq_acpi_match);
 static int ahci_qoriq_hardreset(struct ata_link *link, unsigned int *class,
 			  unsigned long deadline)
 {
-	const unsigned long *timing = sata_ehc_deb_timing(&link->eh_context);
 	void __iomem *port_mmio = ahci_port_base(link->ap);
 	u32 px_cmd, px_is, px_val;
 	struct ata_port *ap = link->ap;
@@ -126,8 +125,8 @@ static int ahci_qoriq_hardreset(struct ata_link *link, unsigned int *class,
 	tf.command = ATA_BUSY;
 	ata_tf_to_fis(&tf, 0, 0, d2h_fis);
 
-	rc = sata_link_hardreset(link, timing, deadline, &online,
-				 ahci_check_ready);
+	rc = sata_link_hardreset(link, sata_ehc_deb_timing(&link->eh_context),
+				 deadline, &online, ahci_check_ready);
 
 	/* restore the PxCMD and PxIS on ls1021 */
 	if (ls1021a_workaround) {

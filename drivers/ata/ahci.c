@@ -785,7 +785,6 @@ static int ahci_p5wdh_hardreset(struct ata_link *link, unsigned int *class,
 static int ahci_avn_hardreset(struct ata_link *link, unsigned int *class,
 			      unsigned long deadline)
 {
-	const unsigned long *timing = sata_ehc_deb_timing(&link->eh_context);
 	struct ata_port *ap = link->ap;
 	struct ahci_port_priv *pp = ap->private_data;
 	struct ahci_host_priv *hpriv = ap->host->private_data;
@@ -809,8 +808,10 @@ static int ahci_avn_hardreset(struct ata_link *link, unsigned int *class,
 		tf.command = ATA_BUSY;
 		ata_tf_to_fis(&tf, 0, 0, d2h_fis);
 
-		rc = sata_link_hardreset(link, timing, deadline, &online,
-				ahci_check_ready);
+		rc = sata_link_hardreset(link,
+					 sata_ehc_deb_timing(&link->eh_context),
+					 deadline, &online,
+					 ahci_check_ready);
 
 		if (sata_scr_read(link, SCR_STATUS, &sstatus) != 0 ||
 				(sstatus & 0xf) != 1)

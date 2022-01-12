@@ -735,7 +735,7 @@ static int sil24_hardreset(struct ata_link *link, unsigned int *class,
 	/* SStatus oscillates between zero and valid status after
 	 * DEV_RST, debounce it.
 	 */
-	rc = sata_link_debounce(link, sata_deb_timing_long, deadline);
+	rc = sata_link_debounce(link, &sata_deb_timing_long, deadline);
 	if (rc) {
 		reason = "PHY debouncing failed";
 		goto err;

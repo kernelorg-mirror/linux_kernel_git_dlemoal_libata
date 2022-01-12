@@ -1526,7 +1526,7 @@ static int nv_hardreset(struct ata_link *link, unsigned int *class,
 	 */
 	if (!(link->ap->pflags & ATA_PFLAG_LOADING) &&
 	    !ata_dev_enabled(link->device))
-		sata_link_hardreset(link, sata_deb_timing_hotplug, deadline,
+		sata_link_hardreset(link, &sata_deb_timing_hotplug, deadline,
 				    NULL, NULL);
 	else {
 		int rc;

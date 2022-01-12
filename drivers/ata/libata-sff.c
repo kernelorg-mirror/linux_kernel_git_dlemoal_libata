@@ -2016,13 +2016,11 @@ EXPORT_SYMBOL_GPL(ata_sff_softreset);
 int sata_sff_hardreset(struct ata_link *link, unsigned int *class,
 		       unsigned long deadline)
 {
-	struct ata_eh_context *ehc = &link->eh_context;
-	const unsigned long *timing = sata_ehc_deb_timing(ehc);
 	bool online;
 	int rc;
 
-	rc = sata_link_hardreset(link, timing, deadline, &online,
-				 ata_sff_check_ready);
+	rc = sata_link_hardreset(link, sata_ehc_deb_timing(&link->eh_context),
+				 deadline, &online, ata_sff_check_ready);
 	if (online)
 		*class = ata_sff_dev_classify(link->device, 1, NULL);
 

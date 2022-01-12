@@ -851,7 +851,7 @@ static int sata_pmp_eh_handle_disabled_links(struct ata_port *ap)
 		/* Some PMPs require hardreset sequence to get
 		 * SError.N working.
 		 */
-		sata_link_hardreset(link, sata_deb_timing_normal,
+		sata_link_hardreset(link, &sata_deb_timing_normal,
 				ata_deadline(jiffies, ATA_TMOUT_INTERNAL_QUICK),
 				NULL, NULL);
 

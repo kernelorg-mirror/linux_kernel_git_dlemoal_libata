@@ -16,12 +16,31 @@
 #include "libata.h"
 #include "libata-transport.h"
 
-/* debounce timing parameters in msecs { interval, duration, timeout } */
-const unsigned long sata_deb_timing_normal[]		= {   5,  100, 2000 };
+/*
+ * Debounce timing parameters in msecs.
+ */
+const struct sata_deb_timing sata_deb_timing_normal =
+{
+	.interval	= 5,
+	.duration	= 100,
+	.timeout	= 2000
+};
 EXPORT_SYMBOL_GPL(sata_deb_timing_normal);
-const unsigned long sata_deb_timing_hotplug[]		= {  25,  500, 2000 };
+
+const struct sata_deb_timing sata_deb_timing_hotplug =
+{
+	.interval	= 25,
+	.duration	= 500,
+	.timeout	= 2000
+};
 EXPORT_SYMBOL_GPL(sata_deb_timing_hotplug);
-const unsigned long sata_deb_timing_long[]		= { 100, 2000, 5000 };
+
+const struct sata_deb_timing sata_deb_timing_long =
+{
+	.interval	= 100,
+	.duration	= 2000,
+	.timeout	= 5000
+};
 EXPORT_SYMBOL_GPL(sata_deb_timing_long);
 
 /**
@@ -211,7 +230,7 @@ EXPORT_SYMBOL_GPL(ata_tf_from_fis);
 /**
  *	sata_link_debounce - debounce SATA phy status
  *	@link: ATA link to debounce SATA phy status for
- *	@params: timing parameters { interval, duration, timeout } in msec
+ *	@timing: debounce timing
  *	@deadline: deadline jiffies for the operation
  *
  *	Make sure SStatus of @link reaches stable state, determined by
@@ -230,16 +249,15 @@ EXPORT_SYMBOL_GPL(ata_tf_from_fis);
  *	RETURNS:
  *	0 on success, -errno on failure.
  */
-int sata_link_debounce(struct ata_link *link, const unsigned long *params,
+int sata_link_debounce(struct ata_link *link,
+		       const struct sata_deb_timing *timing,
 		       unsigned long deadline)
 {
-	unsigned long interval = params[0];
-	unsigned long duration = params[1];
 	unsigned long last_jiffies, t;
 	u32 last, cur;
 	int rc;
 
-	t = ata_deadline(jiffies, params[2]);
+	t = ata_deadline(jiffies, timing->timeout);
 	if (time_before(t, deadline))
 		deadline = t;
 
@@ -251,7 +269,7 @@ int sata_link_debounce(struct ata_link *link, const unsigned long *params,
 	last_jiffies = jiffies;
 
 	while (1) {
-		ata_msleep(link->ap, interval);
+		ata_msleep(link->ap, timing->interval);
 		if ((rc = sata_scr_read(link, SCR_STATUS, &cur)))
 			return rc;
 		cur &= 0xf;
@@ -261,7 +279,7 @@ int sata_link_debounce(struct ata_link *link, const unsigned long *params,
 			if (cur == 1 && time_before(jiffies, deadline))
 				continue;
 			if (time_after(jiffies,
-				       ata_deadline(last_jiffies, duration)))
+				ata_deadline(last_jiffies, timing->duration)))
 				return 0;
 			continue;
 		}
@@ -280,7 +298,7 @@ int sata_link_debounce(struct ata_link *link, const unsigned long *params,
 EXPORT_SYMBOL_GPL(sata_link_debounce);
 
 static int __sata_link_resume(struct ata_link *link,
-			      const unsigned long *timing,
+			      const struct sata_deb_timing *timing,
 			      unsigned long deadline)
 {
 	int tries = ATA_LINK_RESUME_TRIES;
@@ -511,7 +529,7 @@ EXPORT_SYMBOL_GPL(sata_set_spd);
 /**
  *	sata_link_hardreset - reset link via SATA phy reset
  *	@link: link to reset
- *	@timing: timing parameters { interval, duration, timeout } in msec
+ *	@timing: debounce timing parameters
  *	@deadline: deadline jiffies for the operation
  *	@online: optional out parameter indicating link onlineness
  *	@check_ready: optional callback to check link readiness
@@ -532,7 +550,8 @@ EXPORT_SYMBOL_GPL(sata_set_spd);
  *	RETURNS:
  *	0 on success, -errno otherwise.
  */
-int sata_link_hardreset(struct ata_link *link, const unsigned long *timing,
+int sata_link_hardreset(struct ata_link *link,
+			const struct sata_deb_timing *timing,
 			unsigned long deadline,
 			bool *online, int (*check_ready)(struct ata_link *))
 {
