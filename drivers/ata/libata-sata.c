@@ -302,8 +302,17 @@ static int __sata_link_resume(struct ata_link *link,
 			      unsigned long deadline)
 {
 	int tries = ATA_LINK_RESUME_TRIES;
+	unsigned int db_delay = 1;
 	u32 scontrol, serror;
 	int rc;
+
+	/*
+	 * Some PHYs react badly if SControl is pounded immediately after
+	 * resuming. For drivers requesting it, delay 200ms before debouncing.
+	 * Otherwise, only delay by 1ms (arbitrary delay).
+	 */
+	if (link->flags & ATA_LFLAG_DEBOUNCE_DELAY)
+		db_delay = 200;
 
 	if ((rc = sata_scr_read(link, SCR_CONTROL, &scontrol)))
 		return rc;
@@ -317,13 +326,8 @@ static int __sata_link_resume(struct ata_link *link,
 		scontrol = (scontrol & 0x0f0) | 0x300;
 		if ((rc = sata_scr_write(link, SCR_CONTROL, scontrol)))
 			return rc;
-		/*
-		 * Some PHYs react badly if SStatus is pounded
-		 * immediately after resuming.  Delay 200ms before
-		 * debouncing.
-		 */
-		if (!(link->flags & ATA_LFLAG_NO_DEBOUNCE_DELAY))
-			ata_msleep(link->ap, 200);
+
+		ata_msleep(link->ap, db_delay);
 
 		/* is SControl restored correctly? */
 		if ((rc = sata_scr_read(link, SCR_CONTROL, &scontrol)))

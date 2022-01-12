@@ -1115,6 +1115,7 @@ static struct ata_port_info piix_port_info[] = {
 	[piix_pata_mwdma] =	/* PIIX3 MWDMA only */
 	{
 		.flags		= PIIX_PATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA12_ONLY, /* mwdma1-2 ?? CHECK 0 should be ok but slow */
 		.port_ops	= &piix_pata_ops,
@@ -1123,6 +1124,7 @@ static struct ata_port_info piix_port_info[] = {
 	[piix_pata_33] =	/* PIIX4 at 33MHz */
 	{
 		.flags		= PIIX_PATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA12_ONLY, /* mwdma1-2 ?? CHECK 0 should be ok but slow */
 		.udma_mask	= ATA_UDMA2,
@@ -1132,6 +1134,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich_pata_33] =		/* ICH0 - ICH at 33Mhz*/
 	{
 		.flags		= PIIX_PATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA12_ONLY, /* Check: maybe MWDMA0 is ok  */
 		.udma_mask	= ATA_UDMA2,
@@ -1141,6 +1144,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich_pata_66] =		/* ICH controllers up to 66MHz */
 	{
 		.flags		= PIIX_PATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA12_ONLY, /* MWDMA0 is broken on chip */
 		.udma_mask	= ATA_UDMA4,
@@ -1150,6 +1154,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich_pata_100] =
 	{
 		.flags		= PIIX_PATA_FLAGS | PIIX_FLAG_CHECKINTR,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA12_ONLY,
 		.udma_mask	= ATA_UDMA5,
@@ -1159,6 +1164,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich_pata_100_nomwdma1] =
 	{
 		.flags		= PIIX_PATA_FLAGS | PIIX_FLAG_CHECKINTR,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2_ONLY,
 		.udma_mask	= ATA_UDMA5,
@@ -1168,6 +1174,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich5_sata] =
 	{
 		.flags		= PIIX_SATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1177,6 +1184,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich6_sata] =
 	{
 		.flags		= PIIX_SATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1186,6 +1194,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich6m_sata] =
 	{
 		.flags		= PIIX_SATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1195,6 +1204,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich8_sata] =
 	{
 		.flags		= PIIX_SATA_FLAGS | PIIX_FLAG_SIDPR,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1204,6 +1214,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich8_2port_sata] =
 	{
 		.flags		= PIIX_SATA_FLAGS | PIIX_FLAG_SIDPR,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1213,6 +1224,7 @@ static struct ata_port_info piix_port_info[] = {
 	[tolapai_sata] =
 	{
 		.flags		= PIIX_SATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1222,6 +1234,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich8m_apple_sata] =
 	{
 		.flags		= PIIX_SATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1231,6 +1244,7 @@ static struct ata_port_info piix_port_info[] = {
 	[piix_pata_vmw] =
 	{
 		.flags		= PIIX_PATA_FLAGS,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA12_ONLY, /* mwdma1-2 ?? CHECK 0 should be ok but slow */
 		.udma_mask	= ATA_UDMA2,
@@ -1244,6 +1258,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich8_sata_snb] =
 	{
 		.flags		= PIIX_SATA_FLAGS | PIIX_FLAG_SIDPR | PIIX_FLAG_PIO16,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1254,6 +1269,7 @@ static struct ata_port_info piix_port_info[] = {
 	{
 		.flags		= PIIX_SATA_FLAGS | PIIX_FLAG_SIDPR
 					| PIIX_FLAG_PIO16,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask	= ATA_PIO4,
 		.mwdma_mask	= ATA_MWDMA2,
 		.udma_mask	= ATA_UDMA6,
@@ -1263,6 +1279,7 @@ static struct ata_port_info piix_port_info[] = {
 	[ich8_2port_sata_byt] =
 	{
 		.flags          = PIIX_SATA_FLAGS | PIIX_FLAG_SIDPR | PIIX_FLAG_PIO16,
+		.link_flags	= ATA_LFLAG_DEBOUNCE_DELAY,
 		.pio_mask       = ATA_PIO4,
 		.mwdma_mask     = ATA_MWDMA2,
 		.udma_mask      = ATA_UDMA6,
