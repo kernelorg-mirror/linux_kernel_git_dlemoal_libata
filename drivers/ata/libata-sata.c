@@ -254,38 +254,48 @@ int sata_link_debounce(struct ata_link *link,
 		       unsigned long deadline)
 {
 	unsigned long last_jiffies, t;
-	u32 last, cur;
+	u32 last_det, cur_det;
 	int rc;
 
 	t = ata_deadline(jiffies, timing->timeout);
 	if (time_before(t, deadline))
 		deadline = t;
 
-	if ((rc = sata_scr_read(link, SCR_STATUS, &cur)))
+	if ((rc = sata_scr_read(link, SCR_STATUS, &cur_det)))
 		return rc;
-	cur &= 0xf;
+	cur_det &= 0xf;
 
-	last = cur;
+	last_det = cur_det;
 	last_jiffies = jiffies;
 
 	while (1) {
 		ata_msleep(link->ap, timing->interval);
-		if ((rc = sata_scr_read(link, SCR_STATUS, &cur)))
+		if ((rc = sata_scr_read(link, SCR_STATUS, &cur_det)))
 			return rc;
-		cur &= 0xf;
+		cur_det &= 0xf;
 
 		/* DET stable? */
-		if (cur == last) {
-			if (cur == 1 && time_before(jiffies, deadline))
+		if (cur_det == last_det) {
+			/*
+			 * If PHY is not ready, check that the device is present
+			 * until the deadline expires.
+			 */
+			if (cur_det == 1 && time_before(jiffies, deadline))
 				continue;
-			if (time_after(jiffies,
+			/*
+			 * If PHY is ready and the device is present, assume a
+			 * stable PHY and bail out early. Otherwise, make sure
+			 * that DET remains stable for at least timing->duration.
+			 */
+			if (cur_det == 3 ||
+			    time_after(jiffies,
 				ata_deadline(last_jiffies, timing->duration)))
 				return 0;
 			continue;
 		}
 
 		/* unstable, start over */
-		last = cur;
+		last_det = cur_det;
 		last_jiffies = jiffies;
 
 		/* Check deadline.  If debouncing failed, return
