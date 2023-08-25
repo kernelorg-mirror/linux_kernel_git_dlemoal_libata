@@ -5342,18 +5342,17 @@ static void ata_port_request_pm(struct ata_port *ap, pm_message_t mesg,
  *
  * http://thread.gmane.org/gmane.linux.ide/46764
  */
-static const unsigned int ata_port_suspend_ehi = ATA_EHI_QUIET
-						 | ATA_EHI_NO_AUTOPSY
-						 | ATA_EHI_NO_RECOVERY;
+#define ATA_PORT_SUSPEND_EHI	\
+	(ATA_EHI_QUIET | ATA_EHI_NO_AUTOPSY | ATA_EHI_NO_RECOVERY)
 
 static void ata_port_suspend(struct ata_port *ap, pm_message_t mesg)
 {
-	ata_port_request_pm(ap, mesg, 0, ata_port_suspend_ehi, false);
+	ata_port_request_pm(ap, mesg, 0, ATA_PORT_SUSPEND_EHI, false);
 }
 
 static void ata_port_suspend_async(struct ata_port *ap, pm_message_t mesg)
 {
-	ata_port_request_pm(ap, mesg, 0, ata_port_suspend_ehi, true);
+	ata_port_request_pm(ap, mesg, 0, ATA_PORT_SUSPEND_EHI, true);
 }
 
 static int ata_port_pm_suspend(struct device *dev)
@@ -5384,17 +5383,16 @@ static int ata_port_pm_poweroff(struct device *dev)
 	return 0;
 }
 
-static const unsigned int ata_port_resume_ehi = ATA_EHI_NO_AUTOPSY
-						| ATA_EHI_QUIET;
+#define ATA_PORT_RESUME_EHI	(ATA_EHI_NO_AUTOPSY | ATA_EHI_QUIET)
 
 static void ata_port_resume(struct ata_port *ap, pm_message_t mesg)
 {
-	ata_port_request_pm(ap, mesg, ATA_EH_RESET, ata_port_resume_ehi, false);
+	ata_port_request_pm(ap, mesg, ATA_EH_RESET, ATA_PORT_RESUME_EHI, false);
 }
 
 static void ata_port_resume_async(struct ata_port *ap, pm_message_t mesg)
 {
-	ata_port_request_pm(ap, mesg, ATA_EH_RESET, ata_port_resume_ehi, true);
+	ata_port_request_pm(ap, mesg, ATA_EH_RESET, ATA_PORT_RESUME_EHI, true);
 }
 
 static int ata_port_pm_resume(struct device *dev)
