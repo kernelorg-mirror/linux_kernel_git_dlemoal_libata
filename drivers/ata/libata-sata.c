@@ -1271,13 +1271,12 @@ EXPORT_SYMBOL_GPL(ata_sas_slave_alloc);
  *	@ap: ATA port to which SCSI device is attached
  *
  *	RETURNS:
- *	Zero.
+ *	The return value of ata_scsi_dev_config().
  */
 
 int ata_sas_slave_configure(struct scsi_device *sdev, struct ata_port *ap)
 {
-	ata_scsi_dev_config(sdev, ap->link.device);
-	return 0;
+	return ata_scsi_dev_config(sdev, ap->link.device);
 }
 EXPORT_SYMBOL_GPL(ata_sas_slave_configure);
 
