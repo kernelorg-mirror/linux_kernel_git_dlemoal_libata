@@ -1231,10 +1231,15 @@ EXPORT_SYMBOL_GPL(sas_task_abort);
 
 int sas_slave_alloc(struct scsi_device *sdev)
 {
-	if (dev_is_sata(sdev_to_domain_dev(sdev)) && sdev->lun)
+	struct domain_device *dev = sdev_to_domain_dev(sdev);
+
+	if (!dev_is_sata(dev))
+		return 0;
+
+	if (sdev->lun)
 		return -ENXIO;
 
-	return 0;
+	return ata_sas_slave_alloc(sdev, dev->sata_dev.ap);
 }
 EXPORT_SYMBOL_GPL(sas_slave_alloc);
 

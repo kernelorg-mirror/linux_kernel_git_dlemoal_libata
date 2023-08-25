@@ -1252,6 +1252,21 @@ void ata_sas_port_destroy(struct ata_port *ap)
 EXPORT_SYMBOL_GPL(ata_sas_port_destroy);
 
 /**
+ *	ata_sas_slave_alloc - Default slave_alloc routine for libata devices
+ *	@sdev: SCSI device to configure
+ *	@ap: ATA port to which SCSI device is attached
+ *
+ *	RETURNS:
+ *	The return value of ata_scsi_link_port().
+ */
+
+int ata_sas_slave_alloc(struct scsi_device *sdev, struct ata_port *ap)
+{
+	return ata_scsi_dev_alloc(sdev, ap);
+}
+EXPORT_SYMBOL_GPL(ata_sas_slave_alloc);
+
+/**
  *	ata_sas_slave_configure - Default slave_config routine for libata devices
  *	@sdev: SCSI device to configure
  *	@ap: ATA port to which SCSI device is attached
@@ -1262,7 +1277,6 @@ EXPORT_SYMBOL_GPL(ata_sas_port_destroy);
 
 int ata_sas_slave_configure(struct scsi_device *sdev, struct ata_port *ap)
 {
-	ata_scsi_sdev_config(sdev);
 	ata_scsi_dev_config(sdev, ap->link.device);
 	return 0;
 }
