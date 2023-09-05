@@ -138,7 +138,7 @@ extern int scsi_complete_async_scans(void);
 extern int scsi_scan_host_selected(struct Scsi_Host *, unsigned int,
 				   unsigned int, u64, enum scsi_scan_mode);
 extern void scsi_forget_host(struct Scsi_Host *);
-extern void scsi_rescan_device(struct device *);
+extern int scsi_rescan_device(struct device *dev);
 
 /* scsi_sysctl.c */
 #ifdef CONFIG_SYSCTL
